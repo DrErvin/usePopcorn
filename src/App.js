@@ -57,8 +57,12 @@ export default function App() {
   const [isOpen1, setIsOpen1] = useState(true);
   const [isOpen2, setIsOpen2] = useState(true);
 
-  const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
-  const avgUserRating = average(watched.map((movie) => movie.userRating));
+  const avgImdbRating = average(
+    watched.map((movie) => movie.imdbRating)
+  );
+  const avgUserRating = average(
+    watched.map((movie) => movie.userRating)
+  );
   const avgRuntime = average(watched.map((movie) => movie.runtime));
 
   return (
@@ -92,7 +96,10 @@ export default function App() {
             <ul className="list">
               {movies?.map((movie) => (
                 <li key={movie.imdbID}>
-                  <img src={movie.Poster} alt={`${movie.Title} poster`} />
+                  <img
+                    src={movie.Poster}
+                    alt={`${movie.Title} poster`}
+                  />
                   <h3>{movie.Title}</h3>
                   <div>
                     <p>
@@ -140,7 +147,10 @@ export default function App() {
               <ul className="list">
                 {watched.map((movie) => (
                   <li key={movie.imdbID}>
-                    <img src={movie.Poster} alt={`${movie.Title} poster`} />
+                    <img
+                      src={movie.Poster}
+                      alt={`${movie.Title} poster`}
+                    />
                     <h3>{movie.Title}</h3>
                     <div>
                       <p>

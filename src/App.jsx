@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import StarRating from "./starRating";
-import { useMovies } from "./useMovies";
+import StarRating from "./StarRating";
+import { useKey } from "./useKey";
 import { useLocalStorageState } from "./useLocalStorageState";
+import { useMovies } from "./useMovies";
 
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
@@ -15,25 +16,6 @@ export default function App() {
 
   const [watched, setWatched] = useLocalStorageState([], "watched");
 
-  /*
-  useEffect(function () {
-    console.log("After initial render");
-  }, []);
-
-  useEffect(function () {
-    console.log("After every render");
-  });
-
-  useEffect(
-    function () {
-      console.log("D");
-    },
-    [query]
-  );
-
-  console.log("During render");
-*/
-
   function handleSelectMovie(id) {
     setSelectedId((selectedId) => (id === selectedId ? null : id));
   }
@@ -44,11 +26,6 @@ export default function App() {
 
   function handleAddWatched(movie) {
     setWatched((watched) => [...watched, movie]);
-
-    // localStorage.setItem(
-    //   "watched",
-    //   JSON.stringify([...watched, movie])
-    // );
   }
 
   function handleDeleteWatched(id) {
@@ -133,22 +110,11 @@ function Logo() {
 function Search({ query, setQuery }) {
   const inputEl = useRef(null);
 
-  useEffect(
-    function () {
-      function callback(e) {
-        if (document.activeElement === inputEl.current) return;
-
-        if (e.code === "Enter") {
-          inputEl.current.focus();
-          setQuery("");
-        }
-      }
-
-      document.addEventListener("keydown", callback);
-      return () => document.addEventListener("keydown", callback);
-    },
-    [setQuery]
-  );
+  useKey("Enter", function () {
+    if (document.activeElement === inputEl.current) return;
+    inputEl.current.focus();
+    setQuery("");
+  });
 
   return (
     <input
@@ -284,6 +250,23 @@ function MovieDetails({
     Genre: genre,
   } = movie;
 
+  // if (imdbRating > 8) return <p>Greatest ever!</p>;
+  // if (imdbRating > 8) [isTop, setIsTop] = useState(true);
+
+  // const [isTop, setIsTop] = useState(imdbRating > 8);
+  // console.log(isTop);
+  // useEffect(
+  //   function () {
+  //     setIsTop(imdbRating > 8);
+  //   },
+  //   [imdbRating]
+  // );
+
+  // const isTop = imdbRating > 8;
+  // console.log(isTop);
+
+  // const [avgRating, setAvgRating] = useState(0);
+
   function handleAdd() {
     const newWatchedMovie = {
       imdbID: selectedId,
@@ -298,24 +281,12 @@ function MovieDetails({
 
     onAddWatched(newWatchedMovie);
     onCloseMovie();
+
+    // setAvgRating(Number(imdbRating));
+    // setAvgRating((avgRating) => (avgRating + userRating) / 2);
   }
 
-  useEffect(
-    function () {
-      function callback(e) {
-        if (e.code === "Escape") {
-          onCloseMovie();
-        }
-      }
-
-      document.addEventListener("keydown", callback);
-
-      return function () {
-        document.removeEventListener("keydown", callback);
-      };
-    },
-    [onCloseMovie]
-  );
+  useKey("Escape", onCloseMovie);
 
   useEffect(
     function () {
@@ -339,7 +310,7 @@ function MovieDetails({
       document.title = `Movie | ${title}`;
 
       return function () {
-        document.title = "usePopcorn - DrErvin";
+        document.title = "usePopcorn";
         // console.log(`Clean up effect for movie ${title}`);
       };
     },
@@ -369,6 +340,9 @@ function MovieDetails({
               </p>
             </div>
           </header>
+
+          {/* <p>{avgRating}</p> */}
+
           <section>
             <div className="rating">
               {!isWatched ? (
@@ -386,7 +360,7 @@ function MovieDetails({
                 </>
               ) : (
                 <p>
-                  You rated this movie with {watchedUserRating}{" "}
+                  You rated with movie {watchedUserRating}{" "}
                   <span>⭐️</span>
                 </p>
               )}
@@ -430,7 +404,7 @@ function WatchedSummary({ watched }) {
         </p>
         <p>
           <span>⏳</span>
-          <span>{avgRuntime.toFixed(0)} min</span>
+          <span>{avgRuntime} min</span>
         </p>
       </div>
     </div>
